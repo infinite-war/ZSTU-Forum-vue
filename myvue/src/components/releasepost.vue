@@ -81,26 +81,23 @@ export default {
           }
         })
         .then(res=>{
-          if(res.data.data.flag===true) {
-           alert(res.data.message)
+          console.log(res.data.flag)
+          if(res.data.flag===true) {
+            alert(res.data.message)
             console.log(res)
             self.postsId=res.data.postsId
+            this.returnMain()  // 发布成功后跳转页面
           }
           else {
             alert(res.data.message)
             console.log(res)
           }
-
         })
       }
     },
     returnMain(){
-
-      this.$router.push("homepageone?typeId=1&page=1");
-      //测试路由跳转
-      //this.$router.push({ name: 'homepageone', params: { typeId: '1' ,page:'1'} })
+      this.$router.push('/homepageone?typeId='+this.form.category+'&page=1');
     }
-
   }
 }
 </script>
