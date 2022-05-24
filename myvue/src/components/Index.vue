@@ -10,13 +10,11 @@
         </a>
       </div>
       <div>
-        <el-menu
-          :default-active="activeIndex2"
+        <el-menu :default-active="activeIndex2"
           class="el-menu-demo"
           mode="horizontal"
           @select="handleSelect"
-          background-color="#102f6d"
-          text-color="#fff"
+          background-color="#102f6d" text-color="#fff"
           active-text-color="#ffd04b"
         :router="true">
 
@@ -24,14 +22,12 @@
           <el-submenu index="2">
             <template slot="title">帖子</template>
             <el-menu-item index="/releasepost">发布新帖</el-menu-item>
-            <el-menu-item
-              v-for="item in this.$store.state.homepageClass"
+            <el-menu-item v-for="item in this.$store.state.homepageClass"
               :key="item.typeId"
               @click="chooseItem(item.typeId)"
-
             >
             {{item.home}}
-              <!--              :index="'homepageone?typeId='+item.typeId+'&page=1'"-->
+              <!-- :index="'homepageone?typeId='+item.typeId+'&page=1'"-->
             </el-menu-item>
 <!--            <el-menu-item index="/2-3">选项3</el-menu-item>-->
 <!--            <el-submenu index="2-4">-->
@@ -187,6 +183,7 @@ export default {
         })
     },
     //退出向服务器发送请求，成功则将用户在本地信息删除
+    //这里会清空userid，nickname，token这些可以和后端交互的基本信息
     logout(){
       const self = this;
       this.$store.commit("saveLocalid",'')
@@ -194,6 +191,9 @@ export default {
       this.$store.commit("saveToken",'')
       this.ifIdNotExisted = true;
       window.localStorage.removeItem("");
+      alert("退出账号成功！")
+      this.$router.push('/welcome');
+      
       /*self.$axios({
         method:'get',
         url:'/logout',
@@ -232,7 +232,6 @@ export default {
     //!!注意先调用index的created，再调用welcome的created，先父后子
     //若是刷新页面的话，这个页面的localid就没了，而且vue无论如何都先执行 this.chooseIfNotExisted()，虽然我用islogin修改localid，
     //但并不能同步刷新登录按钮，表明vue先渲染组件再执行发送信息的函数。只要用户不自动刷新页面，就没事
-
 
     //setTimeout(this.loading===false, 300 )
 
