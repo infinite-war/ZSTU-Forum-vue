@@ -2,20 +2,21 @@ import Vue from "vue";
 import Router from "vue-router";
 
 import Login from "../components/Login";
-import Index from '../components/Index'
+import Index from '../components/utils'
 import welcome from "../components/welcome";
-import user from "../components/user";
+import user from "../components/commonUser/user";
 import {use} from "element-ui";
 import {drag} from '../assets/JS/welcome'
-import show01 from "../components/show01";
-import show02 from "../components/show02";
-import show00 from "../components/show00";
-import show03 from "../components/show03";
-import releasepost from "../components/releasepost";
-import homepageone from "../components/homepageone";
-import posts from "../components/posts";
-import personal from "../components/personal";
-import userProfile from "../components/userProfile";
+import show01 from "../components/other/show01";
+import show02 from "../components/other/show02";
+import show00 from "../components/other/show00";
+import show03 from "../components/other/show03";
+import releasepost from "../components/post/releasepost";
+import homepageone from "../components/post/homepageone";
+import posts from "../components/post/posts";
+import personal from "../components/commonUser/personal";
+import userProfile from "../components/commonUser/userProfile";
+import adminProfile from "../components/admin/adminProfile";
 Vue.use(Router);
 
 
@@ -76,9 +77,17 @@ export default new Router({
           name:'userProfile',
           path:'/userprofile',
           component:userProfile
+        },
+        {
+          name:'adminProfile',
+          path:'/adminProfile',
+          component:adminProfile
         }
       ]
     },
+
+
+
     {
       name:'show00',
       path:'/show00',
@@ -101,3 +110,4 @@ export default new Router({
     },
   ]
 });
+
