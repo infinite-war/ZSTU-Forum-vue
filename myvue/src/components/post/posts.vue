@@ -149,7 +149,7 @@
                           @click="replyCurrentComment(item.floorId,item.nickname,1)">
                           <i class="el-icon-chat-dot-round"></i>
                         </div>
-                        <div v-if="item.userId === thisId"
+                        <div v-if="item.userId === thisId || isAdmin"
                           class="commentContorlItem"
                           @click="deleteCurrentCommentFloor(item.floorId)">
                           <i class="el-icon-delete-solid"></i>
@@ -181,7 +181,7 @@
                         </div>
                       </div>
                       <div class="delBtn">
-                        <div v-if="i.userId === thisId"
+                        <div v-if="i.userId === thisId || isAdmin"
                           @click="deleteCurrentComment(i.commentId)">
                           删除
                         </div>
@@ -243,6 +243,7 @@ export default {
 
       //当前用户id
       thisId: this.$store.state.localid,
+      isAdmin: this.$store.state.isAdmin,
       //从url获得文章id
       postsId: this.$route.params.postsId,
       title:'',
@@ -271,10 +272,10 @@ export default {
   methods: {
     //初始化页面
     getposts() {
-
       const self = this
      // let url = '/posts/' + this.postsId + '/100/1/1'
       //size为楼层数量
+      // alert(this.isAdmin)
       let url = "post/"+ this.postsId+"?size=100&page=1&order=1"
       self.$axios({
         method: 'get',
@@ -580,7 +581,7 @@ export default {
     // document.head.appendChild(link)
   },
   computed: {
-    markdownToHtml(){
+    markdownToHtml:function(){
       return marked(this.$data.contents);
       //return md.render(this.contents);
     }
