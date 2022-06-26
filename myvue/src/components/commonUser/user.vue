@@ -190,6 +190,7 @@ export default {
             {
               console.log(res)
               alert(res.data.message)
+              this.$router.push("userProfile")
             }
             else{
               console.log(res)
