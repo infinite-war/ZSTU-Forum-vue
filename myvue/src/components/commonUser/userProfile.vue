@@ -10,18 +10,19 @@
             <el-image :src="src" style="width:60px;height:60px;"></el-image>
           </div>
           <div style="margin-top:5px;margin-left:6px;"><span>{{formLabelAlign.realName}}</span></div>
-          <div style="margin-top:50px;margin-left:1px;"><el-button type="text" style="font-size:15px;color:#4D4D4D;"  @click="infomationClick()">个人信息<span style="color:#B0E0E6;" v-show="infomationShow" class="el-icon-s-promotion"></span></el-button></div>
-          <div style="margin-top:5px;margin-left:1px;"><el-button @click="resetUserProfile()">修改信息<span style="color:#B0E0E6;" class="el-icon-s-promotion"></span></el-button></div>
+          <div style="margin-top:50px;margin-left:1px;"><el-button style="font-size:15px;color:#4D4D4D;"  @click="infomationClick()">个人信息<span style="color:#B0E0E6;" v-show="infomationShow" class="el-icon-s-promotion"></span></el-button></div>
+          <div style="margin-top:50px;margin-left:1px;"><el-button style="font-size:15px;color:#4D4D4D;"  @click="passwordClick()">修改密码<span style="color:#B0E0E6;" v-show="passwordShow" class="el-icon-s-promotion"></span></el-button></div>
+          <div style="margin-top:50px;margin-left:1px;"><el-button @click="resetUserProfile()">修改信息<span style="color:#B0E0E6;" class="el-icon-s-promotion"></span></el-button></div>
         </el-col>
 
         <el-col :span="21">
           <el-row :gutter="10" style="margin-top:20px;">
             <el-col :span="2"><div style="text-align:right;"><span>ID：</span></div></el-col>
-            <el-col :span="5">{{formLabelAlign.id}}</el-col>
+            <el-col :span="2">{{formLabelAlign.id}}</el-col>
           </el-row>
           <!-- 个人信息 -->
           <el-row v-show="infomationShow">
-            <el-card style="margin-top:30px;">
+            <el-card style="margin-top: 30px; margin-left: 50px">
               <el-row>
                 <el-col :span="6">
                   <el-row :gutter="12" style="margin-top:20px;">
@@ -49,6 +50,7 @@
               </el-row>
             </el-card>
           </el-row>
+
           <!-- 修改密码 -->
           <el-row v-show="passwordShow">
             <el-card style="margin-top: 30px; margin-left: 50px">
@@ -75,7 +77,7 @@
                 </el-row>
                 <el-row :gutter="12" style="margin-top:1px;">
                   <el-col :span="6">
-                    <div style="text-align:right;"><span>密码：</span></div>
+                    <div style="text-align:right;"><span>新密码：</span></div>
                   </el-col>
                   <el-col :span="5">
                     <el-form-item prop="password1">
@@ -125,13 +127,13 @@
 </template>
 <script>
 
-import npulogo from '../../assets/zstu-logo.png'
+import zstulogo from '../../assets/zstu-logo.png'
 
 export default {
   name:'userProfile',
   data(){
     return {
-      src:npulogo,
+      src:zstulogo,
       levelName:'',
       isCollapse:false,
       infomationShow:true,
@@ -236,14 +238,15 @@ export default {
       }else if(this.personalForm.phone_num === ""){
         this.$message.warning("手机号不能为空")
       }else if(this.personalForm.password1 === ""){
-        this.$message.warning("密码不能为空")
+        this.$message.warning("新密码不能为空")
       }else if(this.personalForm.password2 === ""){
-        this.$message.warning("密码不能为空")
+        this.$message.warning("确认密码不能为空")
       }else if(this.personalForm.verification === ""){
         this.$message.warning("验证码不能为空")
       }else{
         if(this.personalForm.password1 === this.personalForm.password2){
           this.$message.success("修改成功")
+          this.$router.push("userProfile")
           // const params = {
           //     account:this.personalForm.account,
           //     phone_num:this.personalForm.phone_num,
@@ -255,6 +258,7 @@ export default {
           // this.$http.post('',params).then(res => {
           //     console.log(res)
           // })
+
         }else{
           this.$message.warning("两次输入的密码不一致,请重新输入")
         }
@@ -265,7 +269,7 @@ export default {
 
     getInfos() {
       const self = this;
-      if (self.$store.state.localid !== ''&&self.$store.state.localid !== null) {
+      if (self.$store.state.localid !== '' && self.$store.state.localid !== null) {
         self.$axios({
           method: 'get',
           url: 'user/'+self.$store.state.localid
