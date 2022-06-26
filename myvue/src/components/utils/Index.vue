@@ -1,47 +1,47 @@
 <template>
 
   <el-container class="home-contaner">
-<!--    //头部-->
+    <!--    //头部-->
     <el-header>
       <div>
         <a href="/">
-        <el-image :src="require('../../assets/zstu-logo.png')" style="height: 100%">
-        </el-image>
+          <el-image :src="require('../../assets/zstu-logo.png')" style="height: 100%">
+          </el-image>
         </a>
       </div>
       <div>
-        <el-menu :default-active="activeIndex2"
-          class="el-menu-demo"
-          mode="horizontal"
-          @select="handleSelect"
-          background-color="#102f6d" text-color="#fff"
-          active-text-color="#ffd04b"
-        :router="true">
+       <el-menu :default-active="activeIndex1"
+                 class="el-menu-demo"
+                 mode="horizontal"
+                 @select="handleSelect"
+                 background-color="#102f6d" text-color="#fff"
+                 active-text-color="#ffd04b"
+                 :router="true">
 
           <el-menu-item index="/welcome">首页</el-menu-item>
           <el-submenu index="2">
             <template slot="title">帖子</template>
             <el-menu-item index="/releasepost">发布新帖</el-menu-item>
             <el-menu-item v-for="item in this.$store.state.homepageClass"
-              :key="item.typeId"
-              @click="chooseItem(item.typeId)"
+                          :key="item.typeId"
+                          @click="chooseItem(item.typeId)"
             >
-            {{item.home}}
+              {{item.home}}
               <!--:index="'homepageone?typeId='+item.typeId+'&page=1'"-->
             </el-menu-item>
-<!--            <el-menu-item index="/2-3">选项3</el-menu-item>-->
-<!--            <el-submenu index="2-4">-->
-<!--              <template slot="title">选项4</template>-->
-<!--                <el-menu-item >选项1</el-menu-item>-->
-<!--                <el-menu-item index="/2-4-2">选项2</el-menu-item>-->
-<!--                <el-menu-item index="/2-4-3">选项3</el-menu-item>-->
-<!--            </el-submenu>-->
+            <!--            <el-menu-item index="/2-3">选项3</el-menu-item>-->
+            <!--            <el-submenu index="2-4">-->
+            <!--              <template slot="title">选项4</template>-->
+            <!--                <el-menu-item >选项1</el-menu-item>-->
+            <!--                <el-menu-item index="/2-4-2">选项2</el-menu-item>-->
+            <!--                <el-menu-item index="/2-4-3">选项3</el-menu-item>-->
+            <!--            </el-submenu>-->
           </el-submenu>
-          <el-menu-item index="userProfile" >个人信息</el-menu-item>
+          <el-menu-item index="/userProfile" >个人信息</el-menu-item>
           <el-menu-item v-if="isAdmin === true" index="adminProfile">后台管理</el-menu-item>
         </el-menu>
       </div>
-<!--      点击登录则跳转到登录页面-->
+      <!--      点击登录则跳转到登录页面-->
       <div>
         <el-button v-if="ifIdNotExisted === true"  @click="login" class="Login">
           <p style="color: #ffffff;">登录</p>
@@ -55,55 +55,57 @@
     </el-header>
 
     <el-container>
-<!--      取消侧边栏-->
-      <!--//侧边栏-->
-<!--      <el-aside width="200px">-->
-<!--        <el-col :span="20">-->
+<!--&lt;!&ndash;            取消侧边栏&ndash;&gt;-->
+<!--&lt;!&ndash;      //侧边栏&ndash;&gt;-->
+<!--            <el-aside width="200px"  v-if="adminProfileJudge">-->
+<!--              <el-col :span="20">-->
 
-<!--          <el-menu-->
-<!--            default-active="2"-->
-<!--            class="el-menu-vertical-demo"-->
-<!--            @open="handleOpen"-->
-<!--            @close="handleClose"-->
-<!--            background-color="Transparent"-->
-<!--            text-color="#000000"-->
-<!--            active-text-color="T#67C23A"-->
+<!--                <el-menu-->
+<!--                  default-active="2"-->
+<!--                  class="el-menu-vertical-demo"-->
+<!--                  @open="handleOpen"-->
+<!--                  @close="handleClose"-->
+<!--                  background-color="Transparent"-->
+<!--                  text-color="#000000"-->
+<!--                  active-text-color="T#67C23A"-->
 
-<!--            :router="true">-->
-<!--          &lt;!&ndash;侧边栏以index属性路由跳转&ndash;&gt;-->
-<!--            <el-submenu index="1">-->
-<!--              <template slot="title">-->
-<!--                <i class="el-icon-location"></i>-->
-<!--                <span>帖子</span>-->
-<!--              </template>-->
-<!--              <el-menu-item-group>-->
-<!--                <el-menu-item index="1-1">选项1</el-menu-item>-->
-<!--                <el-menu-item index="1-2">选项2</el-menu-item>-->
-<!--                <el-menu-item index="1-3">选项3</el-menu-item>-->
-<!--                <el-menu-item index="1-4">选项4</el-menu-item>-->
+<!--                  :router="true">-->
+<!--                &lt;!&ndash;侧边栏以index属性路由跳转&ndash;&gt;-->
+<!--                  <el-menu-item index="1" >-->
+<!--                    <i class="el-icon-document"></i>-->
+<!--                    <span slot="title">用户管理</span>-->
+<!--                  </el-menu-item>-->
 
-<!--              </el-menu-item-group>-->
-<!--            </el-submenu>-->
+<!--&lt;!&ndash;                  <el-submenu index="1">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <template slot="title">&ndash;&gt;-->
+<!--&lt;!&ndash;                      <i class="el-icon-location"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                      <span>用户管理</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </template>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <el-menu-item-group>&ndash;&gt;-->
+<!--&lt;!&ndash;                      <el-menu-item index="1-1">选项1</el-menu-item>&ndash;&gt;-->
+<!--&lt;!&ndash;                      <el-menu-item index="1-2">选项2</el-menu-item>&ndash;&gt;-->
+<!--&lt;!&ndash;                      <el-menu-item index="1-3">选项3</el-menu-item>&ndash;&gt;-->
+<!--&lt;!&ndash;                      <el-menu-item index="1-4">选项4</el-menu-item>&ndash;&gt;-->
 
-<!--            <el-menu-item index="3" >-->
-<!--              <i class="el-icon-document"></i>-->
-<!--              <span slot="title">页面二</span>-->
-<!--            </el-menu-item>-->
-<!--&lt;!&ndash;            根据index来进行组件选取,点击则进入对应/xxx链接&ndash;&gt;-->
-<!--            <el-menu-item index="user">-->
-<!--              <i class="el-icon-setting"></i>-->
-<!--              <span slot="title">个人信息</span>-->
-<!--            </el-menu-item>-->
+<!--&lt;!&ndash;                    </el-menu-item-group>&ndash;&gt;-->
+<!--&lt;!&ndash;                  </el-submenu>&ndash;&gt;-->
 
-<!--          </el-menu>-->
+<!--                  <el-menu-item index="2" >-->
+<!--                    <i class="el-icon-document"></i>-->
+<!--                    <span slot="title">文章管理</span>-->
+<!--                  </el-menu-item>-->
 
-<!--        </el-col></el-aside>-->
-<!--      //主页面-->
+<!--                </el-menu>-->
+
+<!--              </el-col></el-aside>-->
+
+
+
+<!--            //主页面-->
       <el-main>
         <!--    调用LoadingIcon预加载-->
-
-<!--        路由占位符-->
-<!--        渲染主页面-->
+        <!--        路由占位符-->
+        <!--        渲染主页面-->
 
         <LoadingIcon v-if="loading"></LoadingIcon>
         <router-view v-else></router-view>
@@ -111,6 +113,7 @@
       </el-main>
 
     </el-container>
+
     <GoTop></GoTop>
   </el-container>
 
@@ -169,7 +172,6 @@ export default {
             this.$store.commit("saveNickname", result.data.data.nickname)
             this.$store.commit("saveRole", result.data.data.role==="1")
             this.isAdmin=(result.data.data.role==="1")
-
             this.ifIdNotExisted = false;
             // alert("index页面的islogin执行成功")
             // alert(result.data.id)
@@ -231,18 +233,26 @@ export default {
     }
   },
 
-    //每次刷新页面调用islogin确认登录状态
-    created() {
-      //!!注意先调用index的created，再调用welcome的created，先父后子
-      //若是刷新页面的话，这个页面的localid就没了，而且vue无论如何都先执行 this.chooseIfNotExisted()，虽然我用islogin修改localid，
-      //但并不能同步刷新登录按钮，表明vue先渲染组件再执行发送信息的函数。只要用户不自动刷新页面，就没事
+  //每次刷新页面调用islogin确认登录状态
+  created() {
+    //!!注意先调用index的created，再调用welcome的created，先父后子
+    //若是刷新页面的话，这个页面的localid就没了，而且vue无论如何都先执行 this.chooseIfNotExisted()，虽然我用islogin修改localid，
+    //但并不能同步刷新登录按钮，表明vue先渲染组件再执行发送信息的函数。只要用户不自动刷新页面，就没事
 
-      //setTimeout(this.loading===false, 300 )
+    //setTimeout(this.loading===false, 300 )
 
-      this.islogin()
-      this.chooseIfNotExisted()
-      //this.isadmin()
+    this.islogin()
+    this.chooseIfNotExisted()
+    //this.isadmin()
+  },
+
+  computed:{
+    adminProfileJudge:function(){
+      const curRoute = window.location.href;
+      const sArray = curRoute.split('/');
+      return sArray[sArray.length-1].substr(0,5) === 'admin';
     }
+  }
 }
 
 </script>
