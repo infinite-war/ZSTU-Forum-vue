@@ -12,7 +12,7 @@
           <div style="margin-top:5px;margin-left:6px;"><span>{{formLabelAlign.realName}}</span></div>
           <div style="margin-top:50px;margin-left:1px;"><el-button style="font-size:15px;color:#4D4D4D;"  @click="infomationClick()">个人信息<span style="color:#B0E0E6;" v-show="infomationShow" class="el-icon-s-promotion"></span></el-button></div>
           <div style="margin-top:50px;margin-left:1px;"><el-button style="font-size:15px;color:#4D4D4D;"  @click="passwordClick()">修改密码<span style="color:#B0E0E6;" v-show="passwordShow" class="el-icon-s-promotion"></span></el-button></div>
-          <div style="margin-top:50px;margin-left:1px;"><el-button @click="resetUserProfile()">修改信息<span style="color:#B0E0E6;" class="el-icon-s-promotion"></span></el-button></div>
+          <div style="margin-top:50px;margin-left:1px;"><el-button style="font-size:15px;color:#4D4D4D;"  @click="resetUserProfile()">修改信息<span style="color:#B0E0E6;" class="el-icon-s-promotion"></span></el-button></div>
         </el-col>
 
         <el-col :span="21">
