@@ -167,6 +167,7 @@ export default {
 
             this.$store.commit("saveLocalid", result.data.data.userId)
             this.$store.commit("saveNickname", result.data.data.nickname)
+            this.$store.commit("saveRole", result.data.data.role==="1")
             this.isAdmin=(result.data.data.role==="1")
 
             this.ifIdNotExisted = false;
