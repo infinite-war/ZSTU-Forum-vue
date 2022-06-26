@@ -188,6 +188,7 @@ export default {
       this.$store.commit("saveNickname", '')
       this.$store.commit("saveToken", '')
       this.ifIdNotExisted = true;
+      this.isAdmin=false;
       window.localStorage.removeItem("");
       alert("退出账号成功！")
       //console.log(res)
