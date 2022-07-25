@@ -3,25 +3,19 @@
     <div class="top">
       <div class="userInfo">
         <div class="userAvatar" @click="gotoPersonal('post')">
-          <img
-            :src=" require('../../assets/defaultAvatar.jpg')"
-            alt=""
-          />
-        </div>
-        <div class="userInfoRight">
-          <div class="userName">{{ userInfo.nickName }}</div>
-          <div class="email">{{ userInfo.email }}</div>
+          <img :src=" require('../../assets/defaultAvatar.jpg')" alt=""/>
         </div>
       </div>
     </div>
+    <div class="itemRight">
+      <div class="userName">{{userInfo.nickname}}</div>
+      <div class="email">{{ userInfo.email }}</div>
+    </div>
+
     <div class="bottom">
       <div class="dataCount">
-        <span class="dataItem" @click="gotoPersonal('post')"
-        >Posts: {{ articleNum }}</span
-        >
-        <span class="dataItem" @click="gotoPersonal('comment')"
-        >Comments: {{ commentNum }}</span
-        >
+        <span class="dataItem" @click="gotoPersonal('post')">Posts: {{ articleNum }}</span>
+        <span class="dataItem" @click="gotoPersonal('comment')">Comments: {{ commentNum }}</span>
       </div>
     </div>
   </div>
@@ -49,12 +43,21 @@ export default {
     // 请求
     // 获取用户信息
     async getUserInfoById(id) {
-      let res = await this.$request(`/dquser/${id}`);
-      // console.log(res);
-      this.userInfo = res.data.data;
+      // let res = await this.$request(`/user/${id}`);
+      let self=this;
+      if (self.$store.state.localid !== '' && self.$store.state.localid !== null) {
+        self.$axios({
+          method: 'get',
+          url: 'user/' + self.$store.state.localid
+        }).then(res => {
+          console.log(res)
+          self.userInfo = res.data.data
+        })
+        console.log(res);
+        this.userInfo = res.data.data;
+      }
     },
 
-    // 后面会将评论数量和文章数量直接整合到用户信息中，目前暂时先多发两个请求分别获取这两个数据
     // 获取用户的文章数量
     async getUserArticleNum(id) {
       let res = await this.$request(`/number/dqarticlenumbyuserid/${id}`);
@@ -79,7 +82,7 @@ export default {
     },
   },
   created() {
-    // this.getUserInfoById(this.userId);
+    this.getUserInfoById(this.userId);
     // this.getUserArticleNum(this.userId);
     // this.getUserCommentNum(this.userId);
   },
@@ -90,7 +93,7 @@ export default {
 <style scoped>
 .UserInfoCard {
   width: 100%;
-  height: 250px;
+  height: 280px;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
@@ -109,7 +112,7 @@ export default {
 }
 
 .top {
-  height: 180px;
+  height: 130px;
   position: relative;
   background: url(//assets/9.jpg) no-repeat;
   background-size: cover;

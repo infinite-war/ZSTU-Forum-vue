@@ -1,8 +1,6 @@
 <template>
   <body>
 
-
-
   <section class="nav">
     <h1>FORUM</h1>
     <h2>WELCOME </h2>
@@ -20,7 +18,7 @@
   <main class="main">
     <section class="slider" id="tab-pwa">
       <h1>GREAT</h1>
-      <h2>the best of NPU...</h2>
+      <h2>the best of ZSTU...</h2>
     </section>
     <section class="slider" id="tab-graphql">
       <h1>ACTIVE</h1>
@@ -44,8 +42,6 @@
 export default {
   name: "welcome",
   created() {
-    // this.$drag()
-    //alert("111")
     this.islogin()
   },
   methods:{
@@ -57,10 +53,12 @@ export default {
         url:"/user"
       })
         .then(result => {         //存储用户nickname
-          if(result.data.token!==''&&result.data.token!==null){
-            this.$store.commit("saveLocalid",result.data.data.userId)
+          if(result.data.token!=='' && result.data.token!==null){
+            this.$store.commit("saveLocalid",result.data.data.userId,result.data.data.role === "1")
             this.$store.commit("saveNickname",result.data.data.nickname)
             this.ifIdNotExisted = false;
+            // console.log(result);
+            // alert(result.data.data.role === "1")
             // alert("index页面的islogin执行成功")
             // alert(result.data.id)
           }

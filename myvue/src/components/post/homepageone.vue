@@ -1,5 +1,29 @@
 <template>
   <div class="right">
+    <el-container>
+      <el-aside width="240px" style="z-index:1">
+        <el-col :span="20">
+          <el-menu
+            default-active="1"
+            class="el-menu-vertical-demo"
+            background-color="Transparent"
+            text-color="#000000"
+            active-text-color="T#67C23A"
+            :router="true">
+
+            <hr>
+            <div display="flex">
+              <el-input v-model="keyWord" placeholder="输入关键词以筛选帖子"/>
+              <el-button type="primary" icon="el-icon-search" @click="keyWordSearch()">筛选</el-button>
+              <el-button type="primary" icon="el-icon-delete" @click="clearKeyWord()"/>
+            </div>
+            <hr>
+
+          </el-menu>
+        </el-col></el-aside>
+    </el-container>
+
+
 
     <div class="article">
       <div class="articleItem"
@@ -11,30 +35,21 @@
         </div>
         <div class="ItemCenter">
           <div class="title">{{ item.title }}</div>
-          <div class="publishDate">
-            {{ item.updateTime}}
-          </div>
-          <div
-            class="content mdContent"
-            v-html="item.content"
-          ></div>
+          <div class="publishDate">{{ item.updateTime}}</div>
+          <div class="content mdContent" v-html="item.content"></div>
           <div class="articleImg">
-            <img
-
-              :src="require('../../assets/background.jpg')"
-              class="articleImgItem"
-              fit="contain"
-              lazy
-            />
+            <img :src="require('../../assets/background.jpg')" class="articleImgItem" fit="contain" lazy/>
           </div>
         </div>
         <div class="ItemRight">
           <div class="replyCount">
             <i class="iconfont icon-kuaisuhuifu"></i>
-            {{ item.floors }}
+            获赞数:{{item.likes}} <br>
+            楼层数:{{item.floors}}  <br>
+            浏览数:{{item.views}} <br><br>
           </div>
           <div>
-            <i class="el-icon-user"></i>
+            <i class="el-icon-user"/>
             {{item.nickname}}
           </div>
         </div>
@@ -64,12 +79,12 @@ export default {
   data(){
       return{
         postsList:[],
-        category:'',
+        category:this.$route.query.typeId,
         eachPage:'',
         pagination:'',
         order:'',
         total:'',
-        //catelogy:" this.$route.query.typeId"
+        keyWord:'',
     }
   },
   created() {
@@ -79,26 +94,15 @@ export default {
 
     getInfos() {
       const self = this;
-     // location.reload();
-
-      //alert(this.$route.query.typeId);
-     // alert(catelogy);
-     // alert(this.$route.query.page);
-      //var catelogy = this.$route.query.typeId;
       self.$axios({
         method:'get',
-        //url:"/post/posts?keyword=&userId&category=1&size=5&page=1&order=1"
-         url:'/post/posts?keyword=&userId&category='+this.$route.query.typeId +'&size=15&page='+this.$route.query.page+'&order=1'
+         url:'/post/posts?keyword='+this.keyWord+'&userId&category='+this.$route.query.typeId
+           +'&size=15&page='+this.$route.query.page+'&order=1'
       }).then(res=>{
+        console.log(res)
         if(res.data.flag===true) {
-         // alert(res.data.message)
           this.postsList=res.data.data.records
           this.total=res.data.data.total
-          //this.category=res.data.category
-          //this.eachPage = res.data.eachPage
-          //this.pagination = res.data.pagination
-          //this.order = res.data.order
-          console.log(res)
           window.scrollTo({
             top: 0,
             behavior: "smooth",
@@ -112,20 +116,19 @@ export default {
     },
     // 切换分页的回调
     changePage(e) {
-      // console.log(e);
-      // this.currentPage = e;
       this.$router.push({
         name: "homepageone",
         query: { typeId: this.$route.query.typeId, page: e },
       });
       this.getInfos()
-      // if (this.$route.query.typeId == 0) {
-      //   // 查询全部文章
-      //   this.getAllArticle();
-      // } else {
-      //   this.getArticleById(this.$route.query.typeId);
-      // }
-    }
+    },
+    keyWordSearch(){
+      this.page=1;
+      this.changePage(1);
+    },
+    clearKeyWord(){
+      this.keyWord='';
+    },
   }
 }
 </script>
@@ -256,8 +259,8 @@ export default {
 }
 
 .ItemRight {
-  width: 45px;
-  font-size: 14px;
+  width: auto;
+  font-size: 18px;
   color: rgb(83, 83, 83);
   position: absolute;
   right: 10px;

@@ -119,9 +119,7 @@ export default{
       // }
       else if(this.finiteLengthPassword()===false){
         window.alert("密码过长请重新输入");
-        // return;
       }
-
         else {
         self.$axios({
           method:'post',
@@ -130,22 +128,18 @@ export default{
             username: self.form.username,
             password: self.form.password
           }
-        })
-          .then( res => {
+        }).then( res => {
            if(res.data.flag===true) {
              console.log(res)
-              alert("登录成功！");
+             this.$notify.success('登录成功')
              //alert(res.data.data.userId)
              //保存静态变量id，以便后续识别是否登录
              this.$store.commit("saveLocalid",res.data.data.userId)
              this.$store.commit("saveToken",res.data.data.token)
              localStorage.setItem('token', res.data.data.token)
              //alert(self.$store.state.localid)
-             //通过 this.$http.state.id获取localid
              //此步为跳转，应该在登录后执行，先放在这
              this.$router.push("/index")
-             //islogin不要了
-             // this.islogin()
             }
             else {
              alert("登录失败！");
@@ -215,29 +209,14 @@ export default{
           }
         })
           .then( res => {
-            // switch(res.data){
-            //   case 0:
-            //     alert("注册成功！");
-            //     this.login();
-            //     break;
-            //   case -1:
-            //     this.existed = true;
-            //     break;
-            // }
-            // console.log(res)
-           // alert(res.data.status)
             if(res.data.flag===true)
             {
               alert(res.data.message);
               this.login();
-              //console.log(res)
+              this.$notify.success('注册成功')
             }
-            // else {
-            //   this.existed = true;
-            // }
             else {
-              //alert("注册失败！");
-              console.log(res)
+              // console.log(res)
               alert(res.data.message)
             }
           })

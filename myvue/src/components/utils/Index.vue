@@ -10,8 +10,8 @@
         </a>
       </div>
       <div>
-       <el-menu :default-active="activeIndex1"
-                 class="el-menu-demo"
+
+       <el-menu  class="el-menu-demo"
                  mode="horizontal"
                  @select="handleSelect"
                  background-color="#102f6d" text-color="#fff"
@@ -27,19 +27,11 @@
                           @click="chooseItem(item.typeId)"
             >
               {{item.home}}
-              <!--:index="'homepageone?typeId='+item.typeId+'&page=1'"-->
             </el-menu-item>
-            <!--            <el-menu-item index="/2-3">选项3</el-menu-item>-->
-            <!--            <el-submenu index="2-4">-->
-            <!--              <template slot="title">选项4</template>-->
-            <!--                <el-menu-item >选项1</el-menu-item>-->
-            <!--                <el-menu-item index="/2-4-2">选项2</el-menu-item>-->
-            <!--                <el-menu-item index="/2-4-3">选项3</el-menu-item>-->
-            <!--            </el-submenu>-->
           </el-submenu>
           <el-menu-item index="/userProfile" >个人信息</el-menu-item>
           <el-menu-item v-if="isAdmin === true" index="adminProfile">后台管理</el-menu-item>
-        </el-menu>
+       </el-menu>
       </div>
       <!--      点击登录则跳转到登录页面-->
       <div>
@@ -49,7 +41,6 @@
         <el-button v-else-if="ifIdNotExisted === false"  @click="logout">
           <p style="color: #ffffff">退出</p>
         </el-button>
-        <el-button v-else></el-button>
       </div>
 
     </el-header>
@@ -121,7 +112,6 @@
 
 <script>
 import GoTop from "./GoTop";
-import welcome from "../welcome";
 import LoadingIcon from "./LoadingIcon";
 export default {
   data() {
@@ -130,7 +120,6 @@ export default {
       isAdmin: false,
       loading: false
     }
-
   },
   components: {
     GoTop,
@@ -149,15 +138,6 @@ export default {
     },
     //每次刷新页面时就调用islogin，服务器便发送用户id
     islogin() {
-      // alert(this.loading)
-      //  var start = new Date().getTime();
-      //  //  console.log('休眠前：' + start);
-      //  while (true) {
-      //    if (new Date().getTime() - start > 20000) {
-      //      break;
-      //    }
-      //  }
-      // alert("执行islogin")
       const self = this
       self.$axios({
         method: "get",
@@ -167,14 +147,11 @@ export default {
         .then(result => {         //存储用户nickname
           if (result.data.flag === true) {
             this.loading = false
-
             this.$store.commit("saveLocalid", result.data.data.userId)
             this.$store.commit("saveNickname", result.data.data.nickname)
             this.$store.commit("saveRole", result.data.data.role==="1")
             this.isAdmin=(result.data.data.role==="1")
             this.ifIdNotExisted = false;
-            // alert("index页面的islogin执行成功")
-            // alert(result.data.id)
           } else {
             // alert("index页面的islogin执行失败")
             // alert(result.data)
@@ -193,57 +170,41 @@ export default {
       this.ifIdNotExisted = true;
       this.isAdmin=false;
       window.localStorage.removeItem("");
-      alert("退出账号成功！")
+      this.$notify.success('退出账号成功')
       //console.log(res)
       this.$router.push('/welcome');
-      // self.$axios({
-      //   method:'get',
-      //   url:'/logout',
-      // }).then(res=>{
-      //   if(res.data.status===200) {
-      //     this.$store.commit("saveLocalid",'')
-      //     this.$store.commit("saveNickname",'')
-      //     this.$store.commit("saveToken",'')
-      //     this.ifIdNotExisted = true;
-      //     alert("退出账号成功！")
-      //     console.log(res)
-      //     this.$router.push('index');
-      //   }
-      //   else {
-      //     alert("退出账号失败！")
-      //     console.log(res)
-      //     alert(res.data.message)
-      //   }
-      // })
     },
     chooseIfNotExisted() {
       // alert(this.$store.state.localid)
-      if (this.$store.state.token === '' || this.$store.state.token === null) {
-        this.ifIdNotExisted = true
-      } else {
-        this.ifIdNotExisted = false
-      }
+      this.ifIdNotExisted = (this.$store.state.token === '' || this.$store.state.token === null);
     },
-
-    isadmin() {
-      if (!this.ifIdNotExisted && this.$store.state.isAdmin === '1') {
-        this.isAdmin = true
-      }
-      //alert(this.$store.state.isAdmin)
-    }
   },
 
   //每次刷新页面调用islogin确认登录状态
   created() {
+    //防止刷新页面时localid丢失
+    if (sessionStorage.getItem("store")) {
+      this.$store.replaceState(
+        Object.assign(
+          {},
+          this.$store.state,
+          JSON.parse(sessionStorage.getItem("store"))
+        )
+      );
+      sessionStorage.removeItem("store")
+    }
+
+    //在页面刷新时将vuex里的信息保存到sessionStorage里
+    window.addEventListener("beforeunload", () => {
+      sessionStorage.setItem("store", JSON.stringify(this.$store.state));
+    });
+
     //!!注意先调用index的created，再调用welcome的created，先父后子
     //若是刷新页面的话，这个页面的localid就没了，而且vue无论如何都先执行 this.chooseIfNotExisted()，虽然我用islogin修改localid，
     //但并不能同步刷新登录按钮，表明vue先渲染组件再执行发送信息的函数。只要用户不自动刷新页面，就没事
 
-    //setTimeout(this.loading===false, 300 )
-
-    this.islogin()
     this.chooseIfNotExisted()
-    //this.isadmin()
+    this.islogin()
   },
 
   computed:{
@@ -310,3 +271,4 @@ export default {
 /*  background-color: Transparent;*/
 /*}*/
 </style>
+

@@ -1,8 +1,6 @@
 <template>
   <!--用$route.params.postsId获得参数-->
-
   <div class="articleDetailContainer">
-
     <div class="articleDetail">
       <div class="left">
         <div class="card">
@@ -14,27 +12,15 @@
             <!-- 用户信息 -->
             <div class="author">
               <div class="authorAvatar">
-                <img
-                  class="avatar"
-                  :src="require('../../assets/1.jpg')"
-                  alt=""
-                  lazy
-                  fit="cover"
-                  @click="gotoPersonal(userId)"
-                />
+                <img class="avatar" :src="require('../../assets/1.jpg')" alt="" lazy
+                  fit="cover" @click="gotoPersonal(userId)"/>
               </div>
-              <div
-                class="authorName"
-                @click="gotoPersonal(userId)"
-              >
+              <div class="authorName" @click="gotoPersonal(userId)">
                 {{ nickname }}
               </div>
               <div class="publishDate">
                 {{ updateTime }}
-                <div
-                  class="updatearticle"
-                  v-if="this.userId === this.thisId"
-                >
+                <div class="updatearticle" v-if="this.userId === this.thisId">
                   <div class="fenge">|</div>
                   <div @click="deleteCurrentArticle">删除文章</div>
                 </div>
@@ -42,34 +28,19 @@
             </div>
           </div>
           <!-- 文章内容 -->
-<!--          <div class="content detailtContent" v-html="contents"></div>-->
-<!--            <div v-html="contents" style="width: 96%;margin-bottom: 50px;" class="content detailtContent markdown-body"></div>-->
-<!--          <div v-html="markdownToHtml"></div>-->
           <markdown-it-vue class="md-body" :content="contents"/>
-
           <div class="commentControl">
-            <div
-              class="commentControlItem"
-              :class="isUserLike ? 'controlItemDone' : ''"
-              @click="likeCurrentArticle(!isUserLike)"
-            >
+            <div class="commentControlItem" @click="likeCurrentArticle()" v-if="isUserLike===false">
               <i class="iconfont icon-dianzan"></i>
-              {{ (likes ? "已点赞" : "点赞") + "  " + this.likes }}
+              {{ "点赞"   + "  " + this.likes }}
             </div>
-            <div class="likeUsersAvatar">
-              <!--              <img-->
-              <!--                v-for="(item, index) in likeUserList"-->
-              <!--                :key="index"-->
-              <!--                :src="-->
-              <!--                  item.avatar && item.avatar != ''-->
-              <!--                    ? item.avatar-->
-              <!--                    : require('../assets/3.jpg')-->
-              <!--                "-->
-              <!--                fit="cover"-->
-              <!--              />-->
+            <div class="commentControlItem" @click="dislikeCurrentArticle()" v-else>
+              <i class="iconfont icon-dianzan"></i>
+              {{ "已点赞" + "  " + this.likes }}
             </div>
           </div>
         </div>
+
         <div class="card leftContent commentArea">
           <!-- 评论区 -->
           <div class="commentArea">
@@ -77,8 +48,7 @@
               评论区 ({{ this.floorList.length ? this.floorList.length : 0 }})
             </div>
             <div class="commentInput">
-              <el-input
-                type="textarea"
+              <el-input type="textarea"
                 class="commentTextArea"
                 maxlength="140"
                 show-word-limit
@@ -86,36 +56,21 @@
                 placeholder="留下你的评论"
               ></el-input>
               <div class="submitCommentButton">
-                <el-button
-                  size="mini"
-                  round
-                  @click="submitComment"
-                  class="submitComment"
-                  type="primary"
-                >评论
-                </el-button
-                >
+                <el-button size="mini" round @click="submitComment"
+                  class="submitComment" type="primary">评论
+                </el-button>
               </div>
             </div>
-            <div
-              class="commentItem"
-              v-for="(item, index) in floorList"
-              :key="index"
-            >
+
+            <div class="commentItem" v-for="(item, index) in floorList" :key="index">
               <div class="commentItemContainer">
                 <div class="commentItemArea">
                   <div class="userAvatar">
-                    <!-- :src="item.commentUserAvatar" -->
-                    <img
-                      class="avatar"
-                      :src="require('../../assets/defaultAvatar.jpg') "
-                      alt=""
-                    />
+                    <img class="avatar" :src="require('../../assets/defaultAvatar.jpg') " alt=""/>
                   </div>
                   <div class="commentInfo">
                     <div class="author userInfo">
-                      <div
-                        class="authorName userNickName"
+                      <div class="authorName userNickName"
                         @click="gotoPersonal(item.floorId)">
                         {{ item.nickname }}
                       </div>
@@ -123,29 +78,22 @@
                     <div class="commentContent">
                       {{ item.content }}
                     </div>
-                    <!-- 评论控制区 -->
+                    <!-- 楼层控制区 -->
                     <div class="commentContorl">
                       <div class="publishDate commentDate">
                         {{ item.createTime }}
                       </div>
                       <div class="commentContorlArea">
-                        <div
-                          class="commentContorlItem checkReply"
-                          v-if="item.commentList.length === 0">
+                        <div class="commentContorlItem checkReply"
+                             v-if="item.commentList.length === 0">
                         </div>
-
                         <div class="commentContorlItem" @click="unlikeFloor(item.floorId,index)" v-if=item.likes>
                           <i class="el-icon-star-on"> {{ item.likes }}</i>
                         </div>
                         <div class="commentContorlItem" @click="likeFloor(item.floorId,index)" v-else>
-                          <i class="el-icon-star-on"> {{ item.likes }}</i>
+                          <i class="el-icon-star-off"> {{ item.likes }}</i>
                         </div>
-
-                        <div class="commentContorlItem">
-                          <i class="el-icon-check"></i>
-                        </div>
-                        <div
-                          class="commentContorlItem"
+                        <div class="commentContorlItem"
                           @click="replyCurrentComment(item.floorId,item.nickname,1)">
                           <i class="el-icon-chat-dot-round"></i>
                         </div>
@@ -158,11 +106,9 @@
                     </div>
                   </div>
                 </div>
+
                 <!--楼层评论-->
-
-                <div class="floorComment"
-                  v-if="item.commentList[0] && item.commentList[0].commentId">
-
+                <div class="floorComment" v-if="item.commentList[0] && item.commentList[0].commentId">
                   <div class="floorCommentItemContainer"
                     v-for="(i, idx) in item.commentList"
                     :key="idx">
@@ -175,27 +121,21 @@
                         {{ i.content }}
                       </div>
                       <div class="replyBtn">
-                        <div class=""
-                          @click="replyCurrentComment(i.commentId,i.commentUserNickName,index)">
+                        <div class="" @click="replyCurrentComment(i.commentId,i.commentUserNickName,index)">
                           回复
                         </div>
                       </div>
                       <div class="delBtn">
-                        <div v-if="i.userId === thisId || isAdmin"
-                          @click="deleteCurrentComment(i.commentId)">
+                        <div v-if="i.userId === thisId || isAdmin" @click="deleteCurrentComment(i.commentId)">
                           删除
                         </div>
                       </div>
-
                     </div>
                   </div>
                 </div>
-
-
               </div>
             </div>
           </div>
-
         </div>
       </div>
       <div class="right">
@@ -244,6 +184,7 @@ export default {
       //当前用户id
       thisId: this.$store.state.localid,
       isAdmin: this.$store.state.isAdmin,
+      isUserLike: false,
       //从url获得文章id
       postsId: this.$route.params.postsId,
       title:'',
@@ -263,27 +204,28 @@ export default {
       floorLikeFlag:[],
       floorNumber: '',
       floorId:'',
-
     }
   },
   created() {
     this.getposts()
+    const self = this
+    self.$axios({
+      method: 'get',
+      url: "post/liked/"+ this.postsId
+    }).then(res => {
+        // console.log(res)
+        this.isUserLike= (res.data.flag === true);
+      })
   },
   methods: {
     //初始化页面
     getposts() {
       const self = this
-     // let url = '/posts/' + this.postsId + '/100/1/1'
-      //size为楼层数量
-      // alert(this.isAdmin)
-      let url = "post/"+ this.postsId+"?size=100&page=1&order=1"
       self.$axios({
         method: 'get',
-        url: url
-      })
-        .then(res => {
+        url: "post/"+ this.postsId+"?size=100&page=1&order=1"
+      }).then(res => {
           if (res.data.flag === true) {
-          //  alert(res.data.message)
             this.floorList = res.data.data.floorList
             this.contents = res.data.data.content
             this.userId = res.data.data.userId
@@ -297,21 +239,14 @@ export default {
             this.eachPage = res.data.eachPage
             this.pagination = res.data.pagination
             this.order = res.data.order
-            console.log(res)
-            if( this.likes===0){
-              this.postLikedFlag =true
-            }
-            else {
-              this.postLikedFlag =true
-            }
-
+            // console.log(res)
+            this.postLikedFlag =!(this.likes===0);
           } else {
             alert(res.data.message)
             alert(res.data.data)
-            console.log(res)
+            // console.log(res)
           }
         })
-
     },
     //跳转到个人页面
     gotoPersonal(id) {
@@ -323,31 +258,20 @@ export default {
     //发新楼层+新评论
     submitComment() {
       const self = this
-      //alert("aa")
-
-      //alert(self.floorCommentOriginData.rootIndex)
       if(self.floorCommentOriginData.rootIndex===0){
-
         if (self.$store.state.localid !== '' && self.$store.state.localid !== undefined) {
-
           self.$axios({
             method: 'post',
             url: 'post/floor',
             data: {
-             postId:self.postsId,
+              postId:self.postsId,
               content: self.newCommentData.content
              //  postId : "13",
              //  content:"aaa"
             }
-          })
-            .then(res => {
-              console.log(res)
+          }).then(res => {
+              // console.log(res)
               if (res.data.flag === true) {
-                //self.floorId = res.data.data.floorId
-                //self.floorNumber = res.data.data.floorNumber
-                //console.log(res)
-               // alert(res.data.message)
-             //   alert(self.floorCommentOriginData.rootIndex)
                 // 重置所有数据
                 this.newCommentData = {
                   content: "",
@@ -359,21 +283,17 @@ export default {
                   value: "",
                   rootIndex:0
                 };
-
                 this.getposts()
               }
               else {
-                //console.log(res)
+                // console.log(res)
               }
-
             })
         } else {
           alert("未登录无法发布评论，请先登录")
-
         }
       }
       else if(self.floorCommentOriginData.rootIndex===1){
-       // alert("this")
         if (self.$store.state.localid !== '' && self.$store.state.localid !== undefined) {
           self.$axios({
             method: 'post',
@@ -382,13 +302,9 @@ export default {
               floorId: self.newCommentData.replyId,
               content: self.newCommentData.content
             }
-          })
-            .then(res => {
-              console.log(res)
+          }).then(res => {
+              // console.log(res)
               if (res.data.flag === true) {
-               // console.log(res)
-              //  alert(res.data.message)
-
                 // 重置所有数据
                 this.newCommentData = {
                   content: "",
@@ -400,20 +316,16 @@ export default {
                   value: "",
                   rootIndex:0
                 };
-
                 this.getposts()
               }
-
             })
         } else {
           alert("未登录无法发布评论，请先登录")
-
         }
       }
       else{
         alert("wrong")
       }
-
     },
     //删除楼层
     deleteCurrentCommentFloor(id) {
@@ -421,14 +333,13 @@ export default {
       self.$axios({
         method: 'delete',
         url: 'post/floor/' + id
-      })
-        .then(res => {
+      }).then(res => {
           if (res.data.flag === true) {
             alert("删除楼层成功")
-            console.log(res)
+            // console.log(res)
             this.getposts()
           } else {
-            console.log(res)
+            // console.log(res)
             alert(res.data.message)
           }
         })
@@ -439,20 +350,18 @@ export default {
       self.$axios({
         method: 'delete',
         url: 'post/comment/' + id
-      })
-        .then(res => {
+      }).then(res => {
           if (res.data.flag=== true) {
             alert("删除评论成功")
-            console.log(res)
+            // console.log(res)
             this.getposts()
           } else {
-            console.log(res)
+            // console.log(res)
             alert(res.data.message)
           }
         })
     },
     replyCurrentComment(id, name, index) {
-
       if (this.$store.state.localid !== '' && this.$store.state.localid !== null) {
         this.newCommentData.replyId = id;
         this.newCommentData.content = `@${name}: `;
@@ -460,7 +369,6 @@ export default {
         this.floorCommentOriginData.length = this.newCommentData.content.length;
         this.floorCommentOriginData.value = this.newCommentData.content;
         this.floorCommentOriginData.rootIndex = index;
-
         // 滚动到评论框 并让评论框获取焦点
         this.scrollToCommentInput();
       } else {
@@ -476,7 +384,6 @@ export default {
         top: commentArea.offsetTop - 94,
         behavior: "smooth",
       });
-
       let input = document.querySelector(".commentTextArea");
       // 阻止focus定位
       input.children[0].focus({ preventScroll: true });
@@ -486,14 +393,13 @@ export default {
       self.$axios({
         method: 'delete',
         url: 'post/' + this.postsId
-      })
-        .then(res => {
+      }).then(res => {
           if (res.data.flag === true) {
             alert("删除帖子成功")
-            console.log(res)
+            // console.log(res)
             this.$router.push('/homepageone?typeId='+"1"+'&page=1');
           } else {
-            console.log(res)
+            // console.log(res)
             alert(res.data.message)
           }
         })
@@ -503,15 +409,13 @@ export default {
       self.$axios({
         method: 'post',
         url: 'post/like/' + this.postsId
-      })
-        .then(res => {
+      }).then(res => {
+          // console.log(res)
           if (res.data.flag === true) {
-
-            console.log(res)
-
-          } else {
-            console.log(res)
-            alert(res.data.message)
+            this.$router.go(0)
+            this.$message.success("已点赞")
+          }else{
+            this.$message.info(res.data.message)
           }
         })
     },
@@ -520,58 +424,45 @@ export default {
       self.$axios({
         method: 'delete',
         url: 'post/like/' + this.postsId
-      })
-        .then(res => {
+      }).then(res => {
+          // console.log(res)
           if (res.data.flag === true) {
-
-            console.log(res)
-
-          } else {
-            console.log(res)
-            alert(res.data.message)
+            this.$router.go(0)
+            this.$message.success("已取消赞")
+          }
+          else{
+            this.$message.info(res.data.message)
           }
         })
     },
-    unlikeFloor(floorId){
+    unlikeFloor(floorId,index){
       this.$axios({
         method:'delete',
-        //url此处还要修改
-        url: 'post/floor/like/'+this.floorId
-      })
-        .then( res => {
-          if(res.data.flag===true)
-          {
-            this.floorLikeFlag[index]=false;
-          }
-          else {
-            this.floorLikeFlag[index]=true;
-          }
-        })
-        .catch( err => {
+        url: 'post/floor/like/'+floorId
+      }).then( res => {
+        if(res.data.flag===true)
+          this.floorLikeFlag[index]= false;
+          this.$message.success("楼层取消赞成功");
+          this.$router.go(0);
+          // console.log(res);
+        }).catch( err => {
           console.log(err);
         })
     },
     likeFloor(floorId,index){
       this.$axios({
         method:'post',
-        //url此处还要修改
-        url: 'post/floor/like/'+this.floorId
-      })
-        .then( res => {
-          if(res.data.flag===true)
-          {
-            this.floorLikeFlag[index]=true;
-          }
-          else {
-            this.floorLikeFlag[index]=false;
-          }
-        })
-        .catch( err => {
+        url: 'post/floor/like/'+floorId
+      }).then( res => {
+        if(res.data.flag===true)
+          this.floorLikeFlag[index]=true;
+          this.$message.success("楼层点赞成功");
+          this.$router.go(0);
+          // console.log(res);
+        }).catch( err => {
           console.log(err);
         })
     },
-
-
   },
   mounted () {
     // const link = document.createElement('link')
@@ -605,10 +496,6 @@ export default {
     padding: 15px;
   }
 }
-
-
-
-
 
 .articleDetailContainer {
   display: flex;
@@ -727,7 +614,6 @@ export default {
   border-top: 1px solid #eee;
 }
 
-
 .commentControlItem {
   padding: 13px 20px;
   text-align: center;
@@ -782,7 +668,6 @@ export default {
   height: 300px;
   object-fit: cover;
 }
-
 
 .commentContent {
   font-size: 15px;
@@ -912,11 +797,6 @@ export default {
 .floorCommentItem:hover .replyBtn{
   display: flex;
 }
-
-/*.floorCommentItem:hover .delBtn{*/
-/*  display: flex;*/
-/*}*/
-
 
 .repliedUser {
   color: rgb(148, 148, 148);

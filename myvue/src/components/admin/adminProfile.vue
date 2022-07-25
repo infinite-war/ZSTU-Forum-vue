@@ -1,11 +1,8 @@
 <template>
-
-
-
   <div class="root">
     <!--      侧边栏-->
   <el-container>
-  <el-aside width="200px" style="z-index:1">
+  <el-aside width="240px" style="z-index:1">
     <el-col :span="20">
       <el-menu
         default-active="1"
@@ -16,29 +13,31 @@
         :router="true">
         <!--侧边栏以index属性路由跳转-->
         <el-menu-item>
-          <i class="el-icon-user"></i>
+          <i class="el-icon-user"/>
           <span @click="userManagementClick()">
             用户管理
             <span style="color:#B0E0E6;" v-show="userManagementShow" class="el-icon-s-tools"></span>
           </span>
         </el-menu-item>
 
-<!--        <el-menu-item>-->
-<!--          <i class="el-icon-document"></i>-->
-<!--          <span @click="postManagementClick()">-->
-<!--            文章管理-->
-<!--            <span style="color:#B0E0E6;" v-show="postManagementShow" class="el-icon-s-tools"></span>-->
-<!--          </span>-->
-<!--        </el-menu-item>-->
-
         <el-submenu index="2">
           <template slot="title">
-            帖子管理<span style="color:#B0E0E6;" v-show="postManagementShow" class="el-icon-s-tools"></span>
+            帖子管理
+            <span style="color:#B0E0E6;" v-show="postManagementShow" class="el-icon-s-tools"></span>
           </template>
           <el-menu-item v-for="item in this.$store.state.homepageClass" :key="item.typeId" @click="postManagementClick(item.typeId)">
             {{item.home}}
           </el-menu-item>
         </el-submenu>
+
+        <hr>
+        <div display="flex">
+          <el-input v-model="keyWord" placeholder="输入关键词以筛选记录"/>
+          <el-button type="primary" icon="el-icon-search" @click="keyWordSearch()">关键词筛选</el-button>
+          <br>
+          <el-button type="primary" icon="el-icon-delete" @click="clearKeyWord()"/>
+        </div>
+        <hr>
 
       </el-menu>
     </el-col></el-aside>
@@ -46,12 +45,36 @@
 
     <div class="managementPage" style="z-index:0">
 <!--      用户管理页面-->
-      <div class="userManagement" v-show="userManagementShow">
-        11111111111
+      <div class="article" v-show="userManagementShow">
+        <div class="userItem" v-for="(item, index) in userList" :key="index">
+          <div class="post-block-code">
+            <div>
+              <i class="el-icon-user"></i>
+              id: {{item.userId}} &nbsp;
+              用户名: {{item.username}} &nbsp;
+              生日:{{item.birthday}}  &nbsp;
+              论坛等级:{{item.level}}
+            </div>
+            <div class="ItemCenter">
+              <div class="replyCount">
+                <i class="iconfont icon-kuaisuhuifu"></i>
+                发帖数:{{ item.published }}
+              </div>
+            </div>
+          </div>
+
+          <div class="ItemRight">
+            <div>
+              <el-button style="font-size:5px;color:#fd0707;"
+                         @click="deleteUser(item)">删除
+              </el-button>
+            </div>
+          </div>
+        </div>
       </div>
 
 <!--      帖子管理页面-->
-      <div class="article" v-show="postManagementShow">
+      <div class="article" v-show="postManagementShow" v-bind:title="postsList">
         <div class="articleItem" v-for="(item, index) in postsList" :key="index">
           <div class="post-block-code">
             <div class="post-code" v-html="'id:'+item.postId"></div>
@@ -78,18 +101,16 @@
             </div>
             <div>
               <el-button style="font-size:5px;color:#fd0707;"
-                         @click="deletePost(item.postId)">删除
+                         @click="deletePost(item)">删除
               </el-button>
             </div>
           </div>
         </div>
       </div>
 
-
-
       <div class="bottom">
         <!-- 分页组件 -->
-        <el-pagination background layout="prev, pager, next" :total="100"
+        <el-pagination background layout="prev, pager, next" :total="1000"
                        :current-page="this.$route.query.page * 1"
                        @current-change="changePage"
         >
@@ -115,6 +136,7 @@ export default {
     return {
       userManagementShow:true,
       postManagementShow:false,
+      keyWord:'',
       //文章管理相关
       postsList:[],
       category:1,
@@ -124,40 +146,102 @@ export default {
       order:'',
       total:'',
       //用户管理相关
-
+      userList:[],
     }
   },
 
+  created() {
+    this.changePage(1);
+  },
 
   methods:{
     userManagementClick(){
       this.userManagementShow=true;
       this.postManagementShow=false;
+      this.page=1;
+      this.changePage(1);
     },
     postManagementClick(id){
-      this.postManagementShow=true;
       this.userManagementShow=false;
+      this.postManagementShow=true;
       this.category=id;
       this.page=1;
-      this.getPosts();
+      this.changePage(1);
+    },
+
+    // 切换分页的回调
+    changePage(e) {
+      // console.log(e);
+      // this.currentPage = e;
+      this.page=e;
+      if(this.postManagementShow===true){
+        this.getPosts();
+      }
+      else{
+        this.getUsers();
+      }
+    },
+    keyWordSearch(){
+      this.page=1;
+      this.changePage(1);
+    },
+    clearKeyWord(){
+      this.keyWord='';
     },
 
 
     //===================文章管理相关================
-
-
     //获取帖子列表
     getPosts() {
       const self = this;
-
       self.$axios({
         method:'get',
-        url:'/post/posts?keyword=&userId&category='+this.category +'&size=3&page='+this.page+'&order=1'
+        url:'/post/posts?keyword='+this.keyWord+'&userId&category='+this.category +'&size=5&page='+this.page+'&order=1'
+      }).then(res=>{
+        // console.log(res)
+        if(res.data.flag===true) {
+          this.postsList=res.data.data.records
+          this.total=res.data.data.total
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        }
+        else {
+          alert(res.data.message)
+        }
+      })
+    },
+    //删除帖子
+    deletePost(post){
+      let pid=post.postId
+      const self = this
+      self.$axios({
+        method: 'delete',
+        url: 'post/' + pid
+      }).then(res => {
+          if (res.data.flag === true) {
+            console.log(res)
+            this.postManagementClick(this.category)
+            this.$message.success("帖子删除成功")
+          } else {
+            console.log(res)
+            alert(res.data.message)
+          }
+        })
+    },
+
+
+    //============================用户管理相关=================================
+    //获取用户列表
+    getUsers() {
+      const self = this;
+      self.$axios({
+        method:'get',
+        url:'/user/users?keyword='+this.keyWord+'&userId'+'&size=8&page='+this.page+'&order=1'
       }).then(res=>{
         if(res.data.flag===true) {
-          //console.log('/post/posts?keyword=&userId&category='+this.category +'&size=15&page='+this.page+'&order=1')
-          // alert(res.data.message)
-          this.postsList=res.data.data.records
+          this.userList=res.data.data.records
           this.total=res.data.data.total
           console.log(res)
           window.scrollTo({
@@ -171,38 +255,23 @@ export default {
         }
       })
     },
-    //删除帖子
-    deletePost(postId){
-      let pid=postId
+    //删除用户
+    deleteUser(user){
+      let uid=user.userId
       const self = this
       self.$axios({
         method: 'delete',
-        url: 'post/' + pid
-      })
-        .then(res => {
+        url: 'user/' + uid
+      }).then(res => {
+          // console.log(res)
           if (res.data.flag === true) {
-            alert("删除帖子成功")
-            console.log(res)
-            // this.$router.push('/homepageone?typeId='+"1"+'&page=1');
+            this.userManagementClick();
+            this.$message.success("用户删除成功")
           } else {
-            console.log(res)
             alert(res.data.message)
           }
         })
     },
-    // 切换分页的回调
-    changePage(e) {
-      // console.log(e);
-      // this.currentPage = e;
-      this.page=e
-      this.getPosts()
-      // if (this.$route.query.typeId == 0) {
-      //   // 查询全部文章
-      //   this.getAllArticle();
-      // } else {
-      //   this.getArticleById(this.$route.query.typeId);
-      // }
-    }
   }
 }
 </script>
@@ -261,18 +330,8 @@ export default {
   padding: 20px 180px 0px 180px;
 }
 
-/*.articleItem {*/
-/*  display: flex;*/
-/*  position: relative;*/
-/*  border-bottom: 1px solid #eee;*/
-/*  padding: 20px 180px 20px;*/
-/*  cursor: pointer;*/
-/*  border-radius: 5px;*/
-/*  border: solid;*/
-/*  transition: all 0.15s;*/
-/*}*/
 .articleItem {
-  display: flex;
+  display: inline-flex;
   position: relative;
   border-bottom: 1px solid #eee;
   padding: 20px 20px 20px;
@@ -282,6 +341,20 @@ export default {
 }
 
 .articleItem:hover {
+  background-color: #f2f6fb;
+}
+
+.userItem {
+  display: inline-flex;
+  position: relative;
+  border-bottom: 1px solid #eee;
+  padding: 20px 20px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.15s;
+}
+
+.userItem:hover {
   background-color: #f2f6fb;
 }
 
@@ -346,8 +419,6 @@ export default {
   width: auto;
   margin-right: 10px;
 }
-
-
 
 .articleImgItem /deep/ .el-image__inner {
   width: unset;
