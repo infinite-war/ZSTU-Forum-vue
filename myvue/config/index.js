@@ -1,58 +1,78 @@
-import Vue from "vue"
-import Vuex from "Vuex"
+'use strict'
+// Template version: 1.3.1
+// see http://vuejs-templates.github.io/webpack for documentation.
 
-Vue.use(Vuex)
+const path = require('path')
 
-export default new Vuex.Store({
-  //存放静态变量
-  state:{
-    localid:'',
-    localNickname:'',
-    isAdmin: false,
-    token:'',
+module.exports = {
+  dev: {
 
-    homepageClass:[
-      {
-        home: '分区一',
-        typeId: 1
-      },
-      {
-        home: '测试分区二',
-        typeId: 2
-      },
-      {
-        home: '测试分区三',
-        typeId: 3
+    // Paths
+    assetsSubDirectory: 'static',
+    assetsPublicPath: '/',
+    proxyTable: {
+      '/api': {
+        //target:'http://47.97.114.13/', // 后端接口
+        target:'http://localhost:8088',
+        changeOrigin:true, // 在本地会创建一个虚拟服务端，然后发送请求的数据，并同时接收请求的数据，这样服务端和服务端进行数据的交互就不会有跨域问题
+        pathRewrite:{  // 路径重写，
+          '^/api': ''  // 替换target中的请求地址，也就是说以后你在请求http://api.douban.com/v2/XXXXX这个地址的时候直接写成/api即可。
+        }
       }
-    ],
-    homepageClassNumber:'2',
+    },
 
+    // Various Dev Server settings
+    host: 'localhost', // can be overwritten by process.env.HOST
+    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    autoOpenBrowser: true,
+    errorOverlay: true,
+    notifyOnErrors: true,
+    poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
+
+
+    /**
+     * Source Maps
+     */
+
+    // https://webpack.js.org/configuration/devtool/#development
+    devtool: 'cheap-module-eval-source-map',
+
+    // If you have problems debugging vue-files in devtools,
+    // set this to false - it *may* help
+    // https://vue-loader.vuejs.org/en/options.html#cachebusting
+    cacheBusting: true,
+
+    cssSourceMap: true
   },
 
-  //输入静态变量的方法
-  mutations:{
-    saveLocalid(state,localid) {
-      this.state.localid = localid;
-    },
+  build: {
+    // Template for index.html
+    index: path.resolve(__dirname, '../dist/index.html'),
 
-    saveNickname(state,localNickname)
-    {
-      this.state.localNickname=localNickname;
-    },
+    // Paths
+    assetsRoot: path.resolve(__dirname, '../dist'),
+    assetsSubDirectory: 'static',
+    assetsPublicPath: '/',
 
-    saveRole(state,role){
-      this.state.isAdmin=role;
-    },
+    /**
+     * Source Maps
+     */
 
-    saveToken(state,token){
-      window.localStorage.setItem('token',JSON.stringify(token));
-      this.state.token=token;
-    },
-    deleteToken(state){
-      window.localStorage.removeItem('token');
-      this.state.token='';
-    }
+    productionSourceMap: true,
+    // https://webpack.js.org/configuration/devtool/#production
+    devtool: '#source-map',
 
-  }
+    // Gzip off by default as many popular static hosts such as
+    // Surge or Netlify already gzip all static assets for you.
+    // Before setting to `true`, make sure to:
+    // npm install --save-dev compression-webpack-plugin
+    productionGzip: false,
+    productionGzipExtensions: ['js', 'css'],
 
-})
+    // Run the build command with an extra argument to
+    // View the bundle analyzer report after build finishes:
+    // `npm run build --report`
+    // Set to `true` or `false` to always turn it on or off
+    bundleAnalyzerReport: process.env.npm_config_report
+  },
+}
